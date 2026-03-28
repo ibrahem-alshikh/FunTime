@@ -49,7 +49,7 @@
 
 ### Step 2 — Add Your Key to the File
 
-Open `funtime.html` in any text editor and find **line 1099**:
+Open `funtime.html` in any text editor and find **line 1326**:
 
 ```js
 // ─── CONFIG ───
@@ -76,7 +76,7 @@ funtime.html
 ├── 🧱  HTML ──── Navbar, hero, search, card grid, player modal, episode selector
 └── ⚙️  JS   ──── All logic — zero external libraries
          │
-         ├── CONFIG (line 1099)
+         ├── CONFIG (line 1326)
          │     ├── API_KEY         → your OMDb key
          │     ├── ACTIVE_SOURCE   → default streaming provider
          │     ├── SOURCES         → all streaming provider URL builders
