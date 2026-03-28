@@ -1,0 +1,1615 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FunTime · Movies & TV Shows</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --bg: #060810;
+  --surface: rgba(14,18,34,0.85);
+  --surface2: rgba(20,26,48,0.9);
+  --border: rgba(255,255,255,0.07);
+  --gold: #e8b86d;
+  --gold2: #f5d08a;
+  --blue: #3d7fff;
+  --blue2: #6faeff;
+  --green: #3dffc0;
+  --red: #ff4d6d;
+  --text: #eef0ff;
+  --muted: #6a7499;
+  --muted2: #8b96c4;
+  --card-bg: rgba(12,16,30,0.9);
+  --radius: 1.2rem;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text);
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content:'';
+  position:fixed;
+  inset:0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+  pointer-events:none;
+  z-index:0;
+  opacity:.5;
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  height: 92vh;
+  min-height: 520px;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+}
+
+.hero-bg-slider {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.2s ease;
+  overflow: hidden;
+  background: #060810;
+}
+
+.hero-slide.active { opacity: 1; }
+
+/* Blurred full-cover background layer */
+.hero-slide .hs-blur {
+  position: absolute;
+  inset: -10%;
+  width: 120%;
+  height: 120%;
+  object-fit: cover;
+  object-position: center top;
+  filter: blur(32px) brightness(0.38) saturate(1.5);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Sharp portrait poster — centered, full height */
+.hero-slide .hs-poster {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  height: 100%;
+  width: auto;
+  max-width: 55%;
+  object-fit: cover;
+  object-position: top center;
+  pointer-events: none;
+  z-index: 1;
+  -webkit-mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+  mask-image: linear-gradient(to right, transparent 0%, black 18%, black 82%, transparent 100%);
+}
+
+/* Fallback carousel (no images) */
+.hs-fallback {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1;
+  gap: 1.5rem;
+}
+
+.hs-fc {
+  width: 130px;
+  height: 195px;
+  border-radius: 1rem;
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.1);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+  flex-shrink: 0;
+  transition: all 0.5s ease;
+}
+
+.hs-fc.center {
+  width: 170px;
+  height: 255px;
+  border-color: rgba(232,184,109,0.5);
+  box-shadow: 0 0 40px rgba(232,184,109,0.15);
+}
+
+.hs-fc.side {
+  filter: blur(2px) brightness(0.45);
+  transform: scale(0.88);
+}
+
+.hero-bg-blur {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(6,8,16,0.15) 0%,
+    rgba(6,8,16,0.25) 35%,
+    rgba(6,8,16,0.82) 70%,
+    var(--bg) 100%
+  );
+  z-index: 1;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 2rem 3rem 3.5rem;
+}
+
+.hero-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: rgba(232,184,109,0.15);
+  border: 1px solid rgba(232,184,109,0.3);
+  color: var(--gold);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.9rem;
+  border-radius: 2rem;
+  margin-bottom: 1rem;
+}
+
+.hero-title-block {
+  max-width: 680px;
+  margin-bottom: 1rem;
+}
+
+.hero-main-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 7vw, 5.5rem);
+  line-height: 0.95;
+  letter-spacing: 0.02em;
+  color: #fff;
+  text-shadow: 0 4px 40px rgba(0,0,0,0.6);
+  margin-bottom: 0.5rem;
+}
+
+.hero-meta {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+}
+
+.hero-meta span {
+  font-size: 0.82rem;
+  color: var(--muted2);
+}
+
+.hero-meta .dot { color: var(--muted); }
+
+.hero-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  color: var(--gold) !important;
+  font-weight: 600 !important;
+}
+
+.hero-desc {
+  font-size: 0.95rem;
+  color: var(--muted2);
+  line-height: 1.7;
+  max-width: 520px;
+  margin-bottom: 1.8rem;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.btn-watch {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: var(--gold);
+  color: #090c18;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.85rem 2rem;
+  border-radius: 3rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none;
+}
+
+.btn-watch:hover {
+  background: var(--gold2);
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(232,184,109,0.4);
+}
+
+.btn-info {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  background: rgba(255,255,255,0.1);
+  backdrop-filter: blur(10px);
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.85rem 1.8rem;
+  border-radius: 3rem;
+  border: 1px solid rgba(255,255,255,0.15);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-info:hover {
+  background: rgba(255,255,255,0.18);
+  border-color: rgba(255,255,255,0.3);
+}
+
+/* Hero dots */
+.hero-dots {
+  position: absolute;
+  bottom: 2rem;
+  right: 3rem;
+  z-index: 3;
+  display: flex;
+  gap: 0.5rem;
+}
+
+.hero-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.25);
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.hero-dot.active {
+  width: 24px;
+  border-radius: 3px;
+  background: var(--gold);
+}
+
+/* ─── NAV ─── */
+.navbar {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.2rem 3rem;
+  transition: background 0.4s, backdrop-filter 0.4s;
+}
+
+.navbar.scrolled {
+  background: rgba(6,8,16,0.92);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+}
+
+.nav-logo {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.8rem;
+  letter-spacing: 0.05em;
+  background: linear-gradient(135deg, var(--gold), var(--gold2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
+.nav-right { display:flex; align-items:center; gap:1rem; }
+
+.nav-search-btn {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  color: var(--muted2);
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.nav-search-btn:hover {
+  background: rgba(255,255,255,0.14);
+  color: var(--text);
+}
+
+/* ─── MAIN BODY ─── */
+.main-body {
+  position: relative;
+  z-index: 1;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 2rem 4rem;
+}
+
+/* ─── SEARCH AREA ─── */
+.search-section {
+  margin: -2rem 0 3rem;
+  position: relative;
+  z-index: 10;
+}
+
+.search-glass {
+  background: var(--surface);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 1.5rem 2rem;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+.search-row {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.search-icon { color: var(--gold); font-size: 1.2rem; flex-shrink:0; }
+
+#searchInput {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 500;
+}
+
+#searchInput::placeholder { color: var(--muted); }
+
+.search-clear {
+  background: none;
+  border: none;
+  color: var(--muted);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0.3rem;
+  transition: color 0.2s;
+}
+
+.search-clear:hover { color: var(--text); }
+
+.filter-row {
+  display: flex;
+  gap: 0.8rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.filter-chip {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.45rem 1.1rem;
+  font-size: 0.82rem;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.filter-chip:hover, .filter-chip.active {
+  background: rgba(232,184,109,0.12);
+  border-color: rgba(232,184,109,0.35);
+  color: var(--gold);
+}
+
+select.filter-select {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.45rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: var(--muted2);
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s;
+}
+
+select.filter-select:hover {
+  border-color: rgba(232,184,109,0.3);
+  color: var(--gold);
+}
+
+select.filter-select option { background: #0e1222; color: var(--text); }
+
+input.year-input {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.45rem 1.1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  color: var(--muted2);
+  outline: none;
+  width: 100px;
+  transition: 0.2s;
+}
+
+input.year-input::placeholder { color: var(--muted); }
+input.year-input:focus { border-color: rgba(232,184,109,0.35); color: var(--gold); }
+
+.btn-pill {
+  background: rgba(61,127,255,0.15);
+  border: 1px solid rgba(61,127,255,0.3);
+  border-radius: 2rem;
+  padding: 0.45rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--blue2);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-pill:hover {
+  background: rgba(61,127,255,0.25);
+}
+
+.btn-pill.gold {
+  background: rgba(232,184,109,0.12);
+  border-color: rgba(232,184,109,0.3);
+  color: var(--gold);
+}
+
+.btn-pill.gold:hover { background: rgba(232,184,109,0.22); }
+
+/* ─── SECTION HEADERS ─── */
+.section-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+}
+
+.section-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.7rem;
+  letter-spacing: 0.05em;
+  color: var(--text);
+}
+
+.section-sub {
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ─── LATEST STRIP (horizontal scroll) ─── */
+.latest-section { margin-bottom: 3.5rem; }
+
+.latest-strip {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(232,184,109,0.2) transparent;
+}
+
+.latest-strip::-webkit-scrollbar { height: 4px; }
+.latest-strip::-webkit-scrollbar-thumb { background: rgba(232,184,109,0.2); border-radius: 2px; }
+
+.latest-card {
+  flex: 0 0 140px;
+  cursor: pointer;
+  transition: transform 0.25s;
+}
+
+.latest-card:hover { transform: translateY(-4px); }
+
+.latest-card img, .latest-card .lc-placeholder {
+  width: 140px;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 0.8rem;
+  display: block;
+  background: linear-gradient(135deg, #1a2040, #0d1128);
+}
+
+.lc-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--muted);
+}
+
+.latest-card .lc-title {
+  font-size: 0.72rem;
+  font-weight: 600;
+  color: var(--muted2);
+  margin-top: 0.5rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.latest-card .lc-badge {
+  font-size: 0.62rem;
+  color: var(--muted);
+}
+
+/* ─── FLIP CARD GRID ─── */
+.cards-section { margin-bottom: 3rem; }
+
+.flip-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+.flip-card {
+  height: 300px;
+  perspective: 1000px;
+  cursor: pointer;
+}
+
+.flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-style: preserve-3d;
+}
+
+.flip-card:hover .flip-card-inner,
+.flip-card.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-front, .flip-back {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  overflow: hidden;
+}
+
+.flip-front {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+}
+
+.flip-front img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s;
+}
+
+.flip-front .fp-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(6,8,16,0.95) 0%, rgba(6,8,16,0.3) 60%, transparent 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 1rem;
+}
+
+.fp-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.3;
+  margin-bottom: 0.3rem;
+}
+
+.fp-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fp-year { font-size: 0.72rem; color: var(--muted2); }
+
+.fp-type {
+  font-size: 0.6rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2rem;
+  text-transform: uppercase;
+}
+
+.fp-type.movie { background: rgba(61,127,255,0.2); color: var(--blue2); border: 1px solid rgba(61,127,255,0.3); }
+.fp-type.tv { background: rgba(61,255,192,0.15); color: var(--green); border: 1px solid rgba(61,255,192,0.3); }
+
+.flip-hint {
+  position: absolute;
+  top: 0.7rem;
+  right: 0.7rem;
+  background: rgba(232,184,109,0.15);
+  border: 1px solid rgba(232,184,109,0.3);
+  color: var(--gold);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0.2rem 0.5rem;
+  border-radius: 2rem;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+
+.flip-card:hover .flip-hint { opacity: 1; }
+
+.flip-back {
+  background: linear-gradient(135deg, #0d1628, #101a30);
+  border: 1px solid rgba(232,184,109,0.2);
+  transform: rotateY(180deg);
+  display: flex;
+  flex-direction: column;
+  padding: 1.3rem;
+  justify-content: space-between;
+}
+
+.fb-header {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.fb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.3rem;
+  letter-spacing: 0.04em;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.fb-tags {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+}
+
+.fb-tag {
+  font-size: 0.6rem;
+  font-weight: 600;
+  padding: 0.15rem 0.5rem;
+  border-radius: 2rem;
+  border: 1px solid;
+}
+
+.fb-rating {
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.78rem;
+  color: var(--gold);
+  font-weight: 600;
+}
+
+.fb-desc {
+  font-size: 0.78rem;
+  line-height: 1.65;
+  color: var(--muted2);
+  flex: 1;
+  margin: 0.6rem 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.fb-watch-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  background: var(--gold);
+  color: #090c18;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 0.6rem 1rem;
+  border-radius: 2rem;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+  width: 100%;
+}
+
+.fb-watch-btn:hover {
+  background: var(--gold2);
+  transform: scale(1.02);
+}
+
+/* No-poster back placeholder */
+.flip-front .no-poster {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #1a2040, #0d1128);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
+/* ─── LOADING / EMPTY ─── */
+.loading-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  padding: 4rem;
+  color: var(--muted2);
+  grid-column: 1/-1;
+}
+
+.spinner {
+  width: 36px; height: 36px;
+  border: 3px solid rgba(232,184,109,0.2);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state { text-align: center; padding: 4rem; color: var(--muted); grid-column: 1/-1; font-size: 1rem; }
+
+/* ─── LOAD MORE ─── */
+.load-more-wrap { text-align: center; margin: 2rem 0; }
+
+.btn-load-more {
+  background: rgba(255,255,255,0.06);
+  border: 1px solid var(--border);
+  color: var(--muted2);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.8rem 2.5rem;
+  border-radius: 3rem;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.btn-load-more:hover {
+  background: rgba(232,184,109,0.1);
+  border-color: rgba(232,184,109,0.3);
+  color: var(--gold);
+}
+
+/* ─── MODAL PLAYER ─── */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(4,6,14,0.92);
+  backdrop-filter: blur(8px);
+  z-index: 200;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s;
+}
+
+.modal-overlay.open { opacity: 1; pointer-events: all; }
+
+.modal-box {
+  background: #080d1c;
+  border: 1px solid var(--border);
+  border-radius: 1.5rem;
+  width: 90vw;
+  max-width: 1100px;
+  max-height: 90vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 40px 80px rgba(0,0,0,0.8);
+  transform: scale(0.95);
+  transition: transform 0.3s;
+}
+
+.modal-overlay.open .modal-box { transform: scale(1); }
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.modal-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  letter-spacing: 0.04em;
+  color: var(--text);
+}
+
+.modal-close {
+  background: rgba(255,255,255,0.08);
+  border: 1px solid var(--border);
+  color: var(--muted2);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.modal-close:hover { background: rgba(255,77,109,0.2); color: var(--red); border-color: var(--red); }
+
+.modal-iframe {
+  flex: 1;
+  width: 100%;
+  aspect-ratio: 16/9;
+  border: none;
+  background: #000;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  text-align: center;
+  padding: 2rem;
+  color: var(--muted);
+  font-size: 0.75rem;
+  border-top: 1px solid var(--border);
+  margin-top: 2rem;
+}
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 768px) {
+  .navbar { padding: 1rem 1.5rem; }
+  .hero-content { padding: 1.5rem 1.5rem 2.5rem; }
+  .hero-dots { right: 1.5rem; }
+  .main-body { padding: 0 1rem 3rem; }
+  .search-glass { padding: 1.2rem 1.2rem; }
+  .flip-grid { grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 1rem; }
+  .flip-card { height: 260px; }
+}
+
+@media (max-width: 480px) {
+  .flip-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+/* ─── SECTION DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, var(--border), transparent);
+  margin: 2.5rem 0;
+}
+
+/* quick-action tabs */
+.quick-tabs {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+  margin-bottom: 1.5rem;
+}
+
+.qtab {
+  background: rgba(255,255,255,0.05);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.5rem 1.2rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--muted2);
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.qtab:hover {
+  background: rgba(232,184,109,0.1);
+  border-color: rgba(232,184,109,0.25);
+  color: var(--gold);
+}
+
+.qtab.active {
+  background: rgba(232,184,109,0.15);
+  border-color: rgba(232,184,109,0.4);
+  color: var(--gold);
+}
+
+/* ─── CLEAR HISTORY BTN ─── */
+.clear-history-btn {
+  background: rgba(255,77,109,0.1);
+  border: 1px solid rgba(255,77,109,0.25);
+  color: rgba(255,77,109,0.8);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+  align-self: center;
+}
+
+.clear-history-btn:hover {
+  background: rgba(255,77,109,0.2);
+  border-color: rgba(255,77,109,0.5);
+  color: #ff4d6d;
+  transform: translateY(-1px);
+}
+
+.clear-history-btn:active {
+  transform: scale(0.96);
+}
+</style>
+</head>
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar" id="navbar">
+  <a class="nav-logo" href="#">FunTime</a>
+  <div class="nav-right">
+    <button class="nav-search-btn" onclick="document.getElementById('searchInput').focus(); document.getElementById('searchInput').scrollIntoView({behavior:'smooth'})">
+      🔍 Search
+    </button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="heroSection">
+  <div class="hero-bg-slider" id="heroBgSlider"></div>
+  <div class="hero-bg-blur"></div>
+  <div class="hero-content" id="heroContent">
+    <div class="hero-tag">⭐ Featured</div>
+    <div class="hero-title-block">
+      <div class="hero-main-title" id="heroTitle">Loading...</div>
+      <div class="hero-meta" id="heroMeta"></div>
+      <div class="hero-desc" id="heroDesc">Fetching the best titles for you...</div>
+    </div>
+    <div class="hero-actions" id="heroActions"></div>
+  </div>
+  <div class="hero-dots" id="heroDots"></div>
+</section>
+
+<!-- MAIN -->
+<div class="main-body">
+
+  <!-- SEARCH -->
+  <div class="search-section">
+    <div class="search-glass">
+      <div class="search-row">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="searchInput" placeholder="Search movies, TV shows, actors…" autocomplete="off">
+        <button class="search-clear" id="clearBtn" onclick="clearSearch()">✕</button>
+      </div>
+      <div class="filter-row">
+        <select class="filter-select" id="typeFilter">
+          <option value="all">All Types</option>
+          <option value="movie">Movies</option>
+          <option value="series">TV Shows</option>
+        </select>
+        <input class="year-input" type="text" id="yearFilter" placeholder="Year…" maxlength="4">
+        <button class="btn-pill" onclick="updateDisplay()">Apply</button>
+        <button class="btn-pill gold" onclick="resetAll()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- RECENTLY VIEWED -->
+  <div class="latest-section" id="latestSection">
+    <div class="section-header">
+      <div>
+        <div class="section-title">Recently Viewed</div>
+        <div class="section-sub" id="recentlyViewedSub">Titles you've watched recently</div>
+      </div>
+      <button class="clear-history-btn" id="clearHistoryBtn" onclick="clearRecentlyViewed()" title="Clear history">
+        🗑 Clear
+      </button>
+    </div>
+    <div class="latest-strip" id="latestStrip">
+      <div class="loading-wrap"><div class="spinner"></div></div>
+    </div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- MAIN CARDS -->
+  <div class="cards-section">
+    <div class="section-header">
+      <div class="section-title" id="cardsTitle">Discover</div>
+      <div class="section-sub">Hover to preview · Click to watch</div>
+    </div>
+    <div class="quick-tabs">
+      <button class="qtab active" id="tabAll" onclick="setQuickTab('all', this)">🎬 All</button>
+      <button class="qtab" id="tabMovies" onclick="setQuickTab('movie', this)">🏆 Top Movies</button>
+      <button class="qtab" id="tabShows" onclick="setQuickTab('series', this)">📺 Top Shows</button>
+    </div>
+    <div class="flip-grid" id="flipGrid">
+      <div class="loading-wrap"><div class="spinner"></div><span>Loading titles…</span></div>
+    </div>
+    <div class="load-more-wrap">
+      <button class="btn-load-more" id="loadMoreBtn" style="display:none" onclick="loadMore()">Load More</button>
+    </div>
+  </div>
+
+</div>
+
+<!-- PLAYER MODAL -->
+<div class="modal-overlay" id="playerModal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <div class="modal-title" id="modalTitle">Now Playing</div>
+      <button class="modal-close" onclick="closeModal()">✕</button>
+    </div>
+    <iframe class="modal-iframe" id="playerFrame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
+  </div>
+</div>
+
+<footer>⚡ FunTime · Powered by OMDb & VidSrc · Flip cards to preview · Click to watch</footer>
+
+<script>
+// ─── CONFIG ───
+const API_KEY = "your_key_here";   // 👈 paste your OMDb key here
+const OMDB = `https://www.omdbapi.com/?apikey=${API_KEY}`;
+const VIDSRC = "https://vidsrc-embed.ru/embed";
+
+// Top IDs
+const TOP_MOVIE_IDS = [
+  "tt0111161","tt0068646","tt0071562","tt0468569","tt0050083",
+  "tt0108052","tt0167260","tt0110912","tt0060196","tt0137523",
+  "tt0120737","tt0109830","tt1375666","tt0167261","tt0080684",
+  "tt0133093","tt0099685","tt0073486","tt0102926","tt0118799",
+  "tt0245429","tt0253474","tt0317248","tt0407887","tt0110357",
+  "tt0056058","tt0088763","tt0209144","tt0114369","tt0120815",
+  "tt0120586","tt0169547","tt0103064","tt0075314","tt0081505",
+  "tt0087843","tt0095016","tt0105236","tt0114814","tt0119488",
+  "tt0120689","tt0167404","tt0172495","tt0180093","tt0211915",
+  "tt0246578","tt0251127","tt0268978","tt0338013","tt0361748"
+];
+const TOP_TV_IDS = [
+  "tt0903747","tt7366338","tt0944947","tt0417299","tt2861424",
+  "tt0472954","tt0185906","tt0455276","tt13406094","tt5753856",
+  "tt0421357","tt4574334","tt1806234","tt2707408","tt2085059",
+  "tt6470478","tt0061252","tt0096697","tt0096779","tt0306414",
+  "tt0386676","tt0407304","tt0773262","tt0934814","tt10048342",
+  "tt11198330","tt14452776","tt1520211","tt1796960","tt1839578",
+  "tt1865718","tt2084342","tt2100976","tt2571774","tt3230854",
+  "tt3718778","tt4370524","tt4786824","tt5431592","tt5671326",
+  "tt6005042","tt6048596","tt6226232","tt6468322","tt6517102",
+  "tt6763664","tt7908628","tt8358336","tt9184820","tt9784798"
+];
+
+// Hero featured IMDb IDs (popular, visually rich films/shows)
+const HERO_IDS = [
+  "tt1375666","tt0468569","tt0120737","tt0133093","tt4574334",
+  "tt0944947","tt0903747","tt7366338","tt0109830","tt0245429"
+];
+
+// State
+let allResults = [];
+let currentPage = 1;
+let totalResults = 0;
+let currentMode = "default";
+let currentQuery = "";
+let isLoading = false;
+let heroItems = [];
+let heroIndex = 0;
+let heroTimer = null;
+let activeQuickTab = "all";
+
+// ─── NAVBAR SCROLL ───
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 60);
+});
+
+// ─── EMBED URL ───
+function embedUrl(imdbID, type) {
+  const ep = (type === "series" || type === "tv") ? "tv" : "movie";
+  return `${VIDSRC}/${ep}?imdb=${imdbID}&autoplay=1`;
+}
+
+// ─── OMDB FETCH ───
+async function omdbId(id) {
+  try {
+    const r = await fetch(`${OMDB}&i=${id}&plot=full`);
+    const d = await r.json();
+    return d.Response === "True" ? d : null;
+  } catch { return null; }
+}
+
+async function omdbSearch(q, page = 1) {
+  try {
+    const r = await fetch(`${OMDB}&s=${encodeURIComponent(q)}&page=${page}`);
+    const d = await r.json();
+    if (d.Response === "False") return { results: [], total: 0 };
+    return { results: d.Search || [], total: parseInt(d.totalResults, 10) || 0 };
+  } catch { return null; }
+}
+
+async function fetchByIds(ids) {
+  const batches = [];
+  for (let i = 0; i < ids.length; i += 10) batches.push(ids.slice(i, i + 10));
+  const all = [];
+  for (const batch of batches) {
+    const results = await Promise.all(batch.map(id => omdbId(id)));
+    all.push(...results.filter(Boolean));
+  }
+  return all;
+}
+
+// ─── HERO ───
+async function initHero() {
+  heroItems = await fetchByIds(HERO_IDS);
+  if (!heroItems.length) return;
+
+  const slider = document.getElementById('heroBgSlider');
+  const dots = document.getElementById('heroDots');
+
+  // Create slides
+  heroItems.forEach((item, i) => {
+    const slide = document.createElement('div');
+    slide.className = 'hero-slide' + (i === 0 ? ' active' : '');
+
+    if (item.Poster && item.Poster !== "N/A") {
+      // Hi-res poster URL
+      const hiRes = item.Poster.replace(/_[A-Z]+\d+_\.jpg/, '_SX1000_.jpg');
+
+      // Layer 1: blurred background fill
+      const blurImg = document.createElement('img');
+      blurImg.src = hiRes;
+      blurImg.className = 'hs-blur';
+      blurImg.alt = '';
+      blurImg.setAttribute('aria-hidden', 'true');
+
+      // Layer 2: sharp portrait poster
+      const posterImg = document.createElement('img');
+      posterImg.src = hiRes;
+      posterImg.className = 'hs-poster';
+      posterImg.alt = item.Title || '';
+
+      slide.appendChild(blurImg);
+      slide.appendChild(posterImg);
+    } else {
+      // Fallback: animated placeholder cards
+      const fb = document.createElement('div');
+      fb.className = 'hs-fallback';
+      fb.innerHTML = `
+        <div class="hs-fc side">🎬</div>
+        <div class="hs-fc center">🎭</div>
+        <div class="hs-fc side">📺</div>
+      `;
+      slide.appendChild(fb);
+    }
+
+    slider.appendChild(slide);
+
+    const dot = document.createElement('div');
+    dot.className = 'hero-dot' + (i === 0 ? ' active' : '');
+    dot.onclick = () => goHero(i);
+    dots.appendChild(dot);
+  });
+
+  renderHeroContent(0);
+  startHeroTimer();
+}
+
+function renderHeroContent(idx) {
+  const item = heroItems[idx];
+  if (!item) return;
+
+  document.getElementById('heroTitle').textContent = item.Title;
+
+  const meta = document.getElementById('heroMeta');
+  const parts = [];
+  if (item.Year) parts.push(`<span>${item.Year}</span>`);
+  if (item.Runtime && item.Runtime !== "N/A") parts.push(`<span class="dot">·</span><span>${item.Runtime}</span>`);
+  if (item.Genre && item.Genre !== "N/A") parts.push(`<span class="dot">·</span><span>${item.Genre.split(',')[0]}</span>`);
+  if (item.imdbRating && item.imdbRating !== "N/A") {
+    parts.push(`<span class="dot">·</span><span class="hero-rating">⭐ ${item.imdbRating}</span>`);
+  }
+  meta.innerHTML = parts.join('');
+
+  const desc = item.Plot && item.Plot !== "N/A" ? item.Plot : "A must-watch title.";
+  document.getElementById('heroDesc').textContent = desc;
+
+  const type = item.Type === "series" ? "series" : "movie";
+  document.getElementById('heroActions').innerHTML = `
+    <button class="btn-watch" onclick="openModal('${item.imdbID}', '${type}', '${esc(item.Title)}')">
+      ▶ Watch Now
+    </button>
+    <button class="btn-info" onclick="flipToCard('${item.imdbID}')">
+      ℹ More Info
+    </button>
+  `;
+
+  // Update dots
+  document.querySelectorAll('.hero-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === idx);
+  });
+
+  // Update slides
+  document.querySelectorAll('.hero-slide').forEach((s, i) => {
+    s.classList.toggle('active', i === idx);
+  });
+}
+
+function goHero(idx) {
+  heroIndex = idx;
+  renderHeroContent(idx);
+  clearInterval(heroTimer);
+  startHeroTimer();
+}
+
+function startHeroTimer() {
+  heroTimer = setInterval(() => {
+    heroIndex = (heroIndex + 1) % heroItems.length;
+    renderHeroContent(heroIndex);
+  }, 6000);
+}
+
+// ─── RECENTLY VIEWED ───
+const RECENTLY_VIEWED_KEY = 'funtime_recently_viewed';
+const MAX_RECENT = 20;
+
+function getRecentlyViewed() {
+  try { return JSON.parse(localStorage.getItem(RECENTLY_VIEWED_KEY) || '[]'); } catch { return []; }
+}
+
+function addToRecentlyViewed(item) {
+  let list = getRecentlyViewed();
+  // Remove duplicate
+  list = list.filter(r => r.imdbID !== item.imdbID);
+  // Add to front
+  list.unshift(item);
+  // Cap at max
+  list = list.slice(0, MAX_RECENT);
+  localStorage.setItem(RECENTLY_VIEWED_KEY, JSON.stringify(list));
+}
+
+function trackAndWatch(imdbID, type, title, poster) {
+  addToRecentlyViewed({ imdbID, type, title, poster });
+  openModal(imdbID, type, title);
+  renderRecentlyViewed();
+}
+
+function renderRecentlyViewed() {
+  const strip = document.getElementById('latestStrip');
+  const sub = document.getElementById('recentlyViewedSub');
+  const list = getRecentlyViewed();
+
+  if (!list.length) {
+    strip.innerHTML = '<div style="color:var(--muted);font-size:0.85rem;padding:1rem 0">Nothing watched yet — click ▶ Watch Now on any title to track it here.</div>';
+    if (sub) sub.textContent = 'Titles you watch will appear here';
+    return;
+  }
+
+  if (sub) sub.textContent = `${list.length} title${list.length !== 1 ? 's' : ''} watched`;
+
+  strip.innerHTML = list.map(item => {
+    const embedId = `imdb=${item.imdbID}`;
+    const safeTitle = (item.title || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    return `
+      <div class="latest-card" onclick="openModal('${item.imdbID}', '${item.type}', '${safeTitle}')">
+        ${item.poster
+          ? `<img src="${item.poster}" alt="${safeTitle}" loading="lazy" onerror="this.parentNode.innerHTML='<div class=lc-placeholder>🎬</div>'">`
+          : '<div class="lc-placeholder">🎬</div>'}
+        <div class="lc-title">${item.title || 'Unknown'}</div>
+        <div class="lc-badge">${item.type === 'movie' ? '🎬 Movie' : '📺 TV Show'}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+
+function clearRecentlyViewed() {
+  localStorage.removeItem(RECENTLY_VIEWED_KEY);
+  renderRecentlyViewed();
+}
+
+function loadLatest() {
+  renderRecentlyViewed();
+}
+
+// ─── FLIP GRID ───
+function renderFlipGrid(items) {
+  const grid = document.getElementById('flipGrid');
+  if (!items.length) {
+    grid.innerHTML = '<div class="empty-state">🎭 No results found. Try a different search.</div>';
+    document.getElementById('loadMoreBtn').style.display = 'none';
+    return;
+  }
+
+  grid.innerHTML = items.map(item => {
+    const title = item.Title || '';
+    const year = item.Year || '';
+    const type = item.Type || 'movie';
+    const imdbID = item.imdbID || '';
+    const poster = item.Poster && item.Poster !== "N/A" ? item.Poster : null;
+    const rating = item.imdbRating && item.imdbRating !== "N/A" ? item.imdbRating : null;
+    const plot = item.Plot && item.Plot !== "N/A" ? item.Plot : "No description available.";
+    const genre = item.Genre && item.Genre !== "N/A" ? item.Genre : "";
+    const typeLabel = type === "movie" ? "Movie" : "TV Series";
+    const typeClass = type === "movie" ? "movie" : "tv";
+    const embedType = (type === "series") ? "tv" : "movie";
+
+    return `
+      <div class="flip-card" >
+        <div class="flip-card-inner">
+          <div class="flip-front">
+            ${poster
+              ? `<img src="${poster}" alt="${esc(title)}" loading="lazy" onerror="this.style.display='none';this.nextSibling.style.display='flex'">`
+              : ''
+            }
+            <div class="no-poster" style="display:${poster ? 'none' : 'flex'}">🎬</div>
+            <div class="fp-overlay">
+              <div class="fp-title">${esc(title)}</div>
+              <div class="fp-meta">
+                <span class="fp-year">${year}</span>
+                <span class="fp-type ${typeClass}">${typeLabel}</span>
+              </div>
+            </div>
+            <div class="flip-hint">Preview ↗</div>
+          </div>
+          <div class="flip-back">
+            <div class="fb-header">
+              <div class="fb-title">${esc(title)}</div>
+              <div class="fb-tags">
+                <span class="fb-tag fp-type ${typeClass}">${typeLabel}</span>
+                ${year ? `<span class="fb-tag" style="color:var(--muted2);border-color:var(--border)">${year}</span>` : ''}
+              </div>
+              ${rating ? `<div class="fb-rating">⭐ ${rating} / 10</div>` : ''}
+            </div>
+            <div class="fb-desc">${esc(plot)}</div>
+            <button class="fb-watch-btn" onclick="event.stopPropagation(); trackAndWatch('${imdbID}', '${embedType}', '${esc(title)}', '${poster ? esc(poster) : ''}')">
+              ▶ Watch Now
+            </button>
+          </div>
+        </div>
+      </div>
+    `;
+  }).join('');
+
+  // Load more visibility
+  const lmb = document.getElementById('loadMoreBtn');
+  lmb.style.display = (currentMode === "search" && allResults.length < totalResults) ? 'inline-block' : 'none';
+}
+
+// Track flipped cards
+const flippedCards = new Set();
+
+function handleCardClick(event, imdbID, type, title) {
+  const card = event.currentTarget;
+  if (card.classList.contains('flipped')) {
+    card.classList.remove('flipped');
+    return;
+  }
+  // Unflip all other cards
+  document.querySelectorAll('.flip-card.flipped').forEach(c => c.classList.remove('flipped'));
+  card.classList.add('flipped');
+}
+
+function flipToCard(imdbID) {
+  // Scroll to grid and find card
+  document.getElementById('flipGrid').scrollIntoView({ behavior: 'smooth' });
+}
+
+// ─── MODAL ───
+function openModal(imdbID, type, title) {
+  const url = embedUrl(imdbID, type);
+  openModalDirect(url, title);
+}
+
+function openModalDirect(url, title) {
+  document.getElementById('playerFrame').src = url;
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('playerModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+
+function closeModal() {
+  document.getElementById('playerModal').classList.remove('open');
+  document.getElementById('playerFrame').src = '';
+  document.body.style.overflow = '';
+}
+
+document.getElementById('playerModal').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); });
+
+// ─── SEARCH ───
+document.getElementById('searchInput').addEventListener('input', function() {
+  clearTimeout(this._t);
+  this._t = setTimeout(() => performSearch(), 450);
+});
+
+async function performSearch() {
+  const q = document.getElementById('searchInput').value.trim();
+  if (!q) { loadDefaultContent(); return; }
+  currentMode = "search";
+  currentQuery = q;
+  currentPage = 1;
+  allResults = [];
+  document.getElementById('cardsTitle').textContent = `Results for "${q}"`;
+  document.getElementById('flipGrid').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Searching…</span></div>';
+  const data = await omdbSearch(q, 1);
+  if (!data) return;
+
+  // Fetch full details for plot/rating
+  const detailed = await Promise.all(data.results.map(item => omdbId(item.imdbID)));
+  allResults = detailed.filter(Boolean);
+  totalResults = data.total;
+  updateDisplay();
+}
+
+function clearSearch() {
+  document.getElementById('searchInput').value = '';
+  loadDefaultContent();
+}
+
+function resetAll() {
+  document.getElementById('searchInput').value = '';
+  document.getElementById('typeFilter').value = 'all';
+  document.getElementById('yearFilter').value = '';
+  loadDefaultContent();
+}
+
+// ─── QUICK TABS ───
+function setQuickTab(tab, btn) {
+  document.querySelectorAll('.qtab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeQuickTab = tab;
+
+  if (currentMode === "default" || currentMode === "toplist") {
+    if (tab === 'movie') loadTopMovies();
+    else if (tab === 'series') loadTopShows();
+    else loadDefaultContent();
+  } else {
+    updateDisplay();
+  }
+}
+
+// ─── FILTERS ───
+function applyClientFilters() {
+  let filtered = [...allResults];
+  const type = document.getElementById('typeFilter').value;
+  const year = document.getElementById('yearFilter').value.trim();
+  if (type !== 'all') filtered = filtered.filter(i => i.Type === type || (type === 'series' && i.Type === 'series'));
+  if (year) filtered = filtered.filter(i => i.Year && i.Year.includes(year));
+  if (activeQuickTab === 'movie' && currentMode !== 'toplist') filtered = filtered.filter(i => i.Type === 'movie');
+  if (activeQuickTab === 'series' && currentMode !== 'toplist') filtered = filtered.filter(i => i.Type === 'series');
+  return filtered;
+}
+
+function updateDisplay() {
+  renderFlipGrid(applyClientFilters());
+}
+
+// ─── TOP LISTS ───
+async function loadTopMovies() {
+  currentMode = "toplist";
+  allResults = [];
+  document.getElementById('cardsTitle').textContent = 'Top Movies';
+  document.getElementById('flipGrid').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading top movies…</span></div>';
+  allResults = await fetchByIds(TOP_MOVIE_IDS);
+  renderFlipGrid(allResults);
+}
+
+async function loadTopShows() {
+  currentMode = "toplist";
+  allResults = [];
+  document.getElementById('cardsTitle').textContent = 'Top TV Shows';
+  document.getElementById('flipGrid').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading top shows…</span></div>';
+  allResults = await fetchByIds(TOP_TV_IDS);
+  renderFlipGrid(allResults);
+}
+
+// ─── DEFAULT ───
+async function loadDefaultContent() {
+  currentMode = "default";
+  currentQuery = "";
+  activeQuickTab = "all";
+  document.querySelectorAll('.qtab').forEach((b,i) => b.classList.toggle('active', i===0));
+  document.getElementById('cardsTitle').textContent = 'Discover';
+  document.getElementById('flipGrid').innerHTML = '<div class="loading-wrap"><div class="spinner"></div><span>Loading titles…</span></div>';
+
+  const [mv, tv] = await Promise.all([
+    fetchByIds(TOP_MOVIE_IDS.slice(0, 15)),
+    fetchByIds(TOP_TV_IDS.slice(0, 15))
+  ]);
+
+  // Interleave movies and shows
+  const combined = [];
+  const max = Math.max(mv.length, tv.length);
+  for (let i = 0; i < max; i++) {
+    if (mv[i]) combined.push(mv[i]);
+    if (tv[i]) combined.push(tv[i]);
+  }
+
+  allResults = combined;
+  renderFlipGrid(allResults);
+}
+
+// ─── LOAD MORE ───
+async function loadMore() {
+  if (isLoading || currentMode !== "search") return;
+  if (allResults.length >= totalResults) {
+    document.getElementById('loadMoreBtn').style.display = 'none';
+    return;
+  }
+  isLoading = true;
+  document.getElementById('loadMoreBtn').textContent = 'Loading…';
+  const nextPage = currentPage + 1;
+  const data = await omdbSearch(currentQuery, nextPage);
+  if (data && data.results.length) {
+    const detailed = await Promise.all(data.results.map(item => omdbId(item.imdbID)));
+    allResults = [...allResults, ...detailed.filter(Boolean)];
+    currentPage = nextPage;
+    updateDisplay();
+  }
+  isLoading = false;
+  document.getElementById('loadMoreBtn').textContent = 'Load More';
+}
+
+// ─── UTIL ───
+function esc(str) {
+  return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+// ─── INIT ───
+(async () => {
+  initHero();
+  loadLatest();
+  loadDefaultContent();
+})();
+</script>
+</body>
+</html>
