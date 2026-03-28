@@ -4,14 +4,15 @@
 ### *Your personal movie & TV show streaming hub*
 
 ![HTML](https://img.shields.io/badge/HTML5-Single%20File-e8b86d?style=for-the-badge&logo=html5&logoColor=black)
-![API](https://img.shields.io/badge/OMDb-API%20Powered-3d7fff?style=for-the-badge&logo=imdb&logoColor=white)
-![License](https://img.shields.io/badge/License-MIT-3dffc0?style=for-the-badge)
-![VidSrc](https://img.shields.io/badge/VidSrc-Streaming%20API-ff4d6d?style=for-the-badge&logo=youtube&logoColor=white)
-![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-ff4d6d?style=for-the-badge)
+![OMDb](https://img.shields.io/badge/OMDb-API%20Powered-3d7fff?style=for-the-badge&logo=imdb&logoColor=white)
+![Streaming](https://img.shields.io/badge/Multi--Source-Streaming-ff4d6d?style=for-the-badge&logo=youtube&logoColor=white)
+![Theme](https://img.shields.io/badge/Dark%20%2F%20Light-Mode-3dffc0?style=for-the-badge)
+![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-a855f7?style=for-the-badge)
 
 <br/>
 
-> **Search, preview, and watch** thousands of movies & TV shows — all in a single HTML file. No install. No server. Just open and enjoy.
+> **Search, preview, and watch** thousands of movies & TV shows — all in a single HTML file.
+> No install. No server. No framework. Just open and enjoy.
 
 <br/>
 
@@ -23,13 +24,16 @@
 
 | Feature | Description |
 |---|---|
-| 🎭 **Flip Cards** | Hover any card to flip and see plot, rating & genre |
-| 🔍 **Live Search** | Search the entire OMDb database in real time |
-| 🎬 **Hero Showcase** | Auto-rotating cinematic hero with sharp poster art |
-| 👁️ **Recently Viewed** | Tracks what you've watched across sessions |
-| 🏆 **Top Lists** | Pre-loaded top movies & TV shows to browse |
-| 🎛️ **Filters** | Filter by type (Movie / Series) and year |
-| 📺 **In-page Player** | Watch directly in a modal — no redirects |
+| 🎭 **3D Flip Cards** | Hover any card for a smooth 3D flip showing plot, rating & genre |
+| 🔍 **Live Search** | Search the entire OMDb database in real time with debounce |
+| 🎬 **Cinematic Hero** | Auto-rotating hero with sharp portrait posters + blurred backdrop |
+| 👁️ **Recently Viewed** | Tracks your watch history locally across sessions |
+| 🏆 **Top Lists** | Pre-loaded curated top movies & TV shows to browse instantly |
+| 🎛️ **Filters** | Filter by type (Movie / Series) and release year |
+| 📺 **In-page Player** | Watch in a modal with Season & Episode selector for TV shows |
+| 📡 **Multi-Source** | Switch streaming provider from the navbar — one click |
+| 🌙 **Dark / Light Mode** | Full theme toggle saved to your preferences |
+| 🗑️ **Clear History** | Wipe Recently Viewed with one button |
 | 📱 **Responsive** | Works on desktop, tablet & mobile |
 
 ---
@@ -52,8 +56,6 @@ Open `funtime.html` in any text editor and find **line 1099**:
 const API_KEY = "your_key_here";   // 👈 paste your OMDb key here
 ```
 
-Replace `your_key_here` with your actual key.
-
 ### Step 3 — Open & Enjoy
 
 ```bash
@@ -70,66 +72,91 @@ Or simply **double-click** `funtime.html` in your file explorer. That's it. ✅
 ```
 funtime.html
 │
-├── 🎨  CSS  ──── Dark cinematic theme, flip cards, hero slider
-├── 🧱  HTML ──── Single-page layout, modal player, search bar
-└── ⚙️  JS   ──── OMDb fetch, hero init, search, Recently Viewed
+├── 🎨  CSS  ──── Dark/light themes, 3D flip cards, hero slider, modal, ep-bar
+├── 🧱  HTML ──── Navbar, hero, search, card grid, player modal, episode selector
+└── ⚙️  JS   ──── All logic — zero external libraries
          │
-         ├── CONFIG block (line 1099)
-         │     ├── API_KEY        → your OMDb key
-         │     ├── TOP_MOVIE_IDS  → curated top films
-         │     ├── TOP_TV_IDS     → curated top shows
-         │     └── HERO_IDS       → featured hero titles
+         ├── CONFIG (line 1099)
+         │     ├── API_KEY         → your OMDb key
+         │     ├── ACTIVE_SOURCE   → default streaming provider
+         │     ├── SOURCES         → all streaming provider URL builders
+         │     ├── TOP_MOVIE_IDS   → curated top films (IMDb IDs)
+         │     ├── TOP_TV_IDS      → curated top shows (IMDb IDs)
+         │     └── HERO_IDS        → featured hero titles (IMDb IDs)
          │
-         ├── initHero()           → builds the hero slider
-         ├── performSearch()      → live OMDb search
-         ├── renderFlipGrid()     → renders the card grid
-         ├── trackAndWatch()      → saves to Recently Viewed
-         └── openModal()          → launches the video player
+         ├── initHero()            → builds the auto-rotating hero slider
+         ├── performSearch()       → live OMDb search with debounce
+         ├── renderFlipGrid()      → renders the 3D flip card grid
+         ├── trackAndWatch()       → logs to Recently Viewed + opens player
+         ├── openModal()           → launches player, shows ep-bar for TV
+         ├── loadSeasons()         → fetches season count from OMDb
+         ├── loadEpisodeList()     → fetches episode names per season
+         ├── loadEpisode()         → reloads iframe for selected S/E
+         ├── setSource()           → switches streaming provider live
+         └── toggleTheme()         → flips dark ↔ light mode
 ```
 
 ---
 
 ## ⚙️ Configuration
 
-All settings live at the top of the `<script>` block in `funtime.html`:
+All settings live at the top of the `<script>` block:
 
 ```js
-const API_KEY  = "xxxxxxxx";               // Your OMDb API key
-const OMDB     = `https://www.omdbapi.com/?apikey=${API_KEY}`;
-const VIDSRC   = "https://vidsrc-embed.ru/embed";  // Video embed source
+const API_KEY       = "xxxxxxxx";  // Your OMDb API key
+const ACTIVE_SOURCE = "vidsrc";    // Default streaming provider
 ```
 
-### Customising the Top Lists
+### 📡 Switching Streaming Provider
 
-Want different movies or shows in the default grid? Just edit the IMDb ID arrays:
+You can switch provider **directly from the navbar** using the `📡` dropdown — no code needed. Your choice is saved automatically.
+
+To change the **default** provider that loads on startup, edit line 1331:
+
+```js
+const ACTIVE_SOURCE = "vidsrc";     // default
+const ACTIVE_SOURCE = "vidlink";    // switch to Vidlink
+const ACTIVE_SOURCE = "111movies";  // switch to 111Movies
+```
+
+All three providers use the same **IMDb ID** — switching is instant with no other changes.
+
+### 🎞️ Customising the Top Lists
+
+Want different titles in the default grid or hero? Edit the IMDb ID arrays:
 
 ```js
 const TOP_MOVIE_IDS = [
   "tt0111161",  // The Shawshank Redemption
   "tt0068646",  // The Godfather
-  // add your own IMDb IDs here...
+  // add your own...
 ];
 
 const HERO_IDS = [
-  "tt1375666",  // Inception  ← shown in the big hero at the top
+  "tt1375666",  // Inception  ← shown in the big cinematic hero
   // ...
 ];
 ```
 
-> 💡 Find any IMDb ID by visiting a title on [imdb.com](https://www.imdb.com) — it's the `tt` number in the URL.
+> 💡 Find any IMDb ID on [imdb.com](https://www.imdb.com) — it's the `tt` number in the URL.
 
 ---
 
 ## 🎮 How to Use
 
 ```
-🖱️  Hover a card          → flips to show plot + rating
-▶️  Click "Watch Now"     → opens the in-page video player
-🔍  Type in search bar    → searches OMDb live (450ms debounce)
-🏆  Top Movies / Shows    → browse curated lists
-👁️  Recently Viewed       → your watch history (saved locally)
-🗑️  Clear button          → wipes Recently Viewed history
-⌨️  Press Escape          → closes the video player
+🖱️  Hover a card             → 3D flip reveals plot + rating
+▶️  Click "Watch Now"        → opens the in-page video player
+📺  TV show player           → Season & Episode dropdowns appear at top
+🔄  Change season            → episode list auto-updates with names
+▶️  Hit "Go"                 → loads selected episode (player stays open)
+🔍  Type in search bar       → searches OMDb live (450ms debounce)
+🏆  Top Movies / Shows tabs  → browse curated lists
+👁️  Recently Viewed          → your local watch history
+🗑️  Clear button             → wipes Recently Viewed history
+📡  Navbar source btn        → switch VidSrc / Vidlink / 111Movies
+🌙  Navbar moon btn          → toggle dark / light mode
+⌨️  Press Escape             → closes the video player
 ```
 
 ---
@@ -140,20 +167,52 @@ const HERO_IDS = [
 |---|---|
 | `?i=tt0111161&plot=full` | Fetch full details by IMDb ID |
 | `?s=inception&page=1` | Search titles by keyword |
-| `?i=tt0111161&type=movie` | Filter by type |
+| `?i=tt0111161&Season=2` | Fetch episode list for a season |
 
-The free tier gives you **1,000 requests per day**. FunTime batches requests and caches results in memory to stay well within limits.
+The free tier gives you **1,000 requests/day**. FunTime batches requests and caches in memory to stay well within limits.
+
+---
+
+## 📺 Streaming Sources — Quick Reference
+
+FunTime supports **3 streaming providers** switchable from the navbar with no page reload.
+
+| Provider | Movie URL | TV URL |
+|---|---|---|
+| **VidSrc** | `/embed/movie?imdb=ttXXX&autoplay=1` | `/embed/tv?imdb=ttXXX&season=S&episode=E` |
+| **Vidlink** | `/movie/ttXXX?autoplay=true` | `/tv/ttXXX/S/E?autoplay=true` |
+| **111Movies** | `/movie/ttXXX` | `/tv/ttXXX/S/E` |
+
+**VidSrc mirrors** — if the default goes down, update the URL inside `SOURCES.vidsrc`:
+
+```js
+// around line 1334 in funtime.html
+vidsrc: {
+  name: "VidSrc",
+  movie: (id) => `https://vidsrc-embed.ru/embed/movie?imdb=${id}&autoplay=1`,
+  tv:    (id, s, e) => `https://vidsrc-embed.ru/embed/tv?imdb=${id}&season=${s}&episode=${e}&autoplay=1`,
+},
+```
+
+Common mirrors:
+```
+https://vidsrc.to/embed
+https://vidsrc.me/embed
+https://vidsrc-embed.ru/embed   ← currently used
+```
+
+> 💡 Want to add a new provider? Just add a new entry to `SOURCES` following the same pattern — `movie(id)` and `tv(id, season, episode)`.
 
 ---
 
 ## 🛠️ Built With
 
-- **[OMDb API](https://www.omdbapi.com/)** — movie & TV metadata, posters, ratings
-- **[VidSrc](https://vidsrc.me/)** — video streaming & embed API (`/embed/movie?imdb=` · `/embed/tv?imdb=`)
+- **[OMDb API](https://www.omdbapi.com/)** — movie & TV metadata, posters, ratings, episode lists
+- **[VidSrc](https://vidsrc.me/)** · **[Vidlink](https://vidlink.pro/)** · **[111Movies](https://111movies.net/)** — streaming embed APIs
 - **[Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue)** + **[DM Sans](https://fonts.google.com/specimen/DM+Sans)** — Google Fonts
 - **Vanilla JS** — zero frameworks, zero dependencies
-- **CSS Perspective + `rotateY`** — pure CSS 3D flip effect
-- **localStorage** — Recently Viewed persistence
+- **CSS `perspective` + `rotateY`** — pure CSS 3D flip cards
+- **`localStorage`** — watch history + theme preference + source preference
 
 ---
 
@@ -164,47 +223,19 @@ The free tier gives you **1,000 requests per day**. FunTime batches requests and
 | Chrome / Edge | ✅ Full support |
 | Firefox | ✅ Full support |
 | Safari | ✅ Full support |
-| Mobile Chrome/Safari | ✅ Responsive |
+| Mobile Chrome / Safari | ✅ Responsive |
 
 ---
-
-
----
-
-## 📺 VidSrc API — Quick Reference
-
-FunTime uses **VidSrc** to stream movies and TV shows directly inside the in-page player modal.
-
-| Embed URL | What it streams |
-|---|---|
-| `/embed/movie?imdb=tt0111161` | Movie by IMDb ID |
-| `/embed/tv?imdb=tt0903747` | TV show by IMDb ID |
-| `/embed/movie?imdb=tt0111161&autoplay=1` | Auto-starts playback |
-
-The base URL is set on **line 1101** in `funtime.html`:
-
-```js
-const VIDSRC = "https://vidsrc-embed.ru/embed";
-```
-
-> 💡 If a stream stops working, swap the base URL with another VidSrc mirror — the embed paths (`/movie`, `/tv`) stay the same across mirrors.
-
-**Common VidSrc mirrors:**
-```
-https://vidsrc.to/embed
-https://vidsrc.me/embed
-https://vidsrc-embed.ru/embed   ← currently used
-```
 
 ## ⚠️ Disclaimer
 
-FunTime is a **personal project** built for educational purposes. It uses publicly available embed sources and the free OMDb API. Respect the [OMDb API Terms of Use](https://www.omdbapi.com/legal.htm) and do not exceed your daily request limit.
+FunTime is a **personal project** built for educational purposes. It uses publicly available embed sources and the free OMDb API. Please respect the [OMDb API Terms of Use](https://www.omdbapi.com/legal.htm) and do not exceed your daily request limit.
 
 ---
 
 <div align="center">
 
-Made with ☕ and too many late-night movies.
+Made with ☕ and too many late-night movies — and a little help from **Claude** 🤖
 
 **[⬆ Back to top](#-funtime)**
 
