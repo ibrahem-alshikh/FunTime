@@ -26,6 +26,128 @@
   --radius: 1.2rem;
 }
 
+
+/* ─── LIGHT MODE ─── */
+body.light {
+  --bg: #f0f2f8;
+  --surface: rgba(255,255,255,0.85);
+  --surface2: rgba(240,242,248,0.9);
+  --border: rgba(0,0,0,0.09);
+  --text: #111827;
+  --muted: #7a85a3;
+  --muted2: #4b5578;
+  --card-bg: rgba(255,255,255,0.92);
+}
+
+body.light { background: var(--bg); }
+body.light .navbar.scrolled { background: rgba(240,242,248,0.95); }
+body.light .flip-back { background: linear-gradient(135deg, #e8ecf8, #d8deef); border-color: rgba(232,184,109,0.35); }
+body.light .search-glass { background: rgba(255,255,255,0.9); }
+body.light .modal-box { background: #f0f2f8; }
+body.light select.filter-select option { background: #f0f2f8; color: #111827; }
+body.light .btn-load-more { background: rgba(0,0,0,0.05); color: var(--muted2); }
+body.light .flip-front { border-color: rgba(0,0,0,0.1); }
+
+/* ─── SOURCE SWITCHER DROPDOWN ─── */
+.source-switcher {
+  position: relative;
+}
+
+.source-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  background: rgba(61,127,255,0.12);
+  border: 1px solid rgba(61,127,255,0.3);
+  color: #6faeff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  padding: 0.5rem 1.1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.source-btn:hover {
+  background: rgba(61,127,255,0.22);
+  border-color: rgba(61,127,255,0.5);
+}
+
+.source-btn .source-arrow {
+  font-size: 0.6rem;
+  transition: transform 0.2s;
+}
+
+.source-dropdown {
+  position: absolute;
+  top: calc(100% + 0.6rem);
+  right: 0;
+  background: rgba(13,18,36,0.98);
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  padding: 0.4rem;
+  min-width: 170px;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+  z-index: 200;
+  display: none;
+  backdrop-filter: blur(20px);
+}
+
+body.light .source-dropdown {
+  background: rgba(255,255,255,0.98);
+  box-shadow: 0 16px 40px rgba(0,0,0,0.15);
+}
+
+.source-dropdown.open { display: block; animation: dropIn 0.18s ease; }
+
+@keyframes dropIn {
+  from { opacity: 0; transform: translateY(-6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.source-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.7rem;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--muted2);
+  transition: all 0.15s;
+}
+
+.source-option:hover { background: rgba(61,127,255,0.12); color: var(--text); }
+.source-option.active { background: rgba(61,127,255,0.18); color: #6faeff; font-weight: 700; }
+.source-option .src-check { font-size: 0.7rem; opacity: 0; }
+.source-option.active .src-check { opacity: 1; }
+
+/* ─── THEME TOGGLE ─── */
+.theme-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: all 0.2s;
+  flex-shrink: 0;
+}
+
+.theme-btn:hover {
+  background: rgba(232,184,109,0.15);
+  border-color: rgba(232,184,109,0.35);
+  transform: rotate(20deg);
+}
+
 html { scroll-behavior: smooth; }
 
 body {
@@ -897,6 +1019,81 @@ input.year-input:focus { border-color: rgba(232,184,109,0.35); color: var(--gold
   background: #000;
 }
 
+
+/* ─── EPISODE SELECTOR ─── */
+.ep-bar {
+  display: none;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 0.7rem 1.5rem;
+  border-bottom: 1px solid var(--border);
+  background: rgba(0,0,0,0.15);
+  flex-wrap: wrap;
+  flex-shrink: 0;
+}
+
+.ep-bar.visible { display: flex; }
+
+.ep-label {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--muted);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.ep-select {
+  background: rgba(255,255,255,0.07);
+  border: 1px solid var(--border);
+  border-radius: 2rem;
+  padding: 0.35rem 1rem;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+  transition: 0.2s;
+  min-width: 80px;
+}
+
+.ep-select:hover, .ep-select:focus {
+  border-color: rgba(232,184,109,0.4);
+  color: var(--gold);
+}
+
+.ep-select option { background: #0e1222; color: var(--text); }
+body.light .ep-select option { background: #f0f2f8; }
+
+.ep-go-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  background: rgba(232,184,109,0.15);
+  border: 1px solid rgba(232,184,109,0.35);
+  color: var(--gold);
+  font-family: 'DM Sans', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 700;
+  padding: 0.35rem 1rem;
+  border-radius: 2rem;
+  cursor: pointer;
+  transition: 0.2s;
+  white-space: nowrap;
+}
+
+.ep-go-btn:hover {
+  background: rgba(232,184,109,0.28);
+  border-color: rgba(232,184,109,0.6);
+}
+
+.ep-loading {
+  font-size: 0.75rem;
+  color: var(--muted);
+  font-style: italic;
+}
+
 /* ─── FOOTER ─── */
 footer {
   text-align: center;
@@ -999,6 +1196,27 @@ footer {
     <button class="nav-search-btn" onclick="document.getElementById('searchInput').focus(); document.getElementById('searchInput').scrollIntoView({behavior:'smooth'})">
       🔍 Search
     </button>
+
+    <!-- SOURCE SWITCHER -->
+    <div class="source-switcher" id="sourceSwitcher">
+      <button class="source-btn" onclick="toggleSourceMenu()" id="sourceBtn">
+        📡 <span id="sourceLabel">VidSrc</span> <span class="source-arrow">▾</span>
+      </button>
+      <div class="source-dropdown" id="sourceDropdown">
+        <div class="source-option active" id="opt-vidsrc" onclick="setSource('vidsrc')">
+          VidSrc <span class="src-check">✓</span>
+        </div>
+        <div class="source-option" id="opt-vidlink" onclick="setSource('vidlink')">
+          Vidlink <span class="src-check">✓</span>
+        </div>
+        <div class="source-option" id="opt-111movies" onclick="setSource('111movies')">
+          111Movies <span class="src-check">✓</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- THEME TOGGLE -->
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle dark/light mode">🌙</button>
   </div>
 </nav>
 
@@ -1088,6 +1306,15 @@ footer {
       <div class="modal-title" id="modalTitle">Now Playing</div>
       <button class="modal-close" onclick="closeModal()">✕</button>
     </div>
+    <!-- EPISODE SELECTOR (TV only) -->
+    <div class="ep-bar" id="epBar">
+      <span class="ep-label">Season</span>
+      <select class="ep-select" id="epSeason" onchange="onSeasonChange()"></select>
+      <span class="ep-label">Episode</span>
+      <select class="ep-select" id="epEpisode"></select>
+      <button class="ep-go-btn" onclick="loadEpisode()">▶ Go</button>
+      <span class="ep-loading" id="epLoading"></span>
+    </div>
     <iframe class="modal-iframe" id="playerFrame" src="" allowfullscreen allow="autoplay; fullscreen"></iframe>
   </div>
 </div>
@@ -1098,7 +1325,28 @@ footer {
 // ─── CONFIG ───
 const API_KEY = "your_key_here";   // 👈 paste your OMDb key here
 const OMDB = `https://www.omdbapi.com/?apikey=${API_KEY}`;
-const VIDSRC = "https://vidsrc-embed.ru/embed";
+
+// ─── STREAMING SOURCES ───
+// Set ACTIVE_SOURCE to any key below to switch provider instantly
+const ACTIVE_SOURCE = "vidsrc"; // 👈 change this: "vidsrc" | "vidlink" | "111movies"
+
+const SOURCES = {
+  vidsrc: {
+    name: "VidSrc",
+    movie: (id) => `https://vidsrc-embed.ru/embed/movie?imdb=${id}&autoplay=1`,
+    tv:    (id, s=1, e=1) => `https://vidsrc-embed.ru/embed/tv?imdb=${id}&season=${s}&episode=${e}&autoplay=1`,
+  },
+  vidlink: {
+    name: "Vidlink",
+    movie: (id) => `https://vidlink.pro/movie/${id}?autoplay=true`,
+    tv:    (id, s=1, e=1) => `https://vidlink.pro/tv/${id}/${s}/${e}?autoplay=true`,
+  },
+  "111movies": {
+    name: "111Movies",
+    movie: (id) => `https://111movies.net/movie/${id}`,
+    tv:    (id, s=1, e=1) => `https://111movies.net/tv/${id}/${s}/${e}`,
+  },
+};
 
 // Top IDs
 const TOP_MOVIE_IDS = [
@@ -1151,8 +1399,9 @@ window.addEventListener('scroll', () => {
 
 // ─── EMBED URL ───
 function embedUrl(imdbID, type) {
-  const ep = (type === "series" || type === "tv") ? "tv" : "movie";
-  return `${VIDSRC}/${ep}?imdb=${imdbID}&autoplay=1`;
+  const src = SOURCES[activeSource] || SOURCES.vidsrc;
+  const isTv = (type === "series" || type === "tv");
+  return isTv ? src.tv(imdbID) : src.movie(imdbID);
 }
 
 // ─── OMDB FETCH ───
@@ -1441,14 +1690,36 @@ function flipToCard(imdbID) {
 }
 
 // ─── MODAL ───
-function openModal(imdbID, type, title) {
-  const url = embedUrl(imdbID, type);
-  openModalDirect(url, title);
+let _modalImdbID = '';
+let _modalType   = '';
+let _modalSeasonCount = 0;
+
+async function openModal(imdbID, type, title) {
+  _modalImdbID = imdbID;
+  _modalType   = type;
+
+  const isTv = (type === 'tv' || type === 'series');
+  document.getElementById('modalTitle').textContent = title;
+  document.getElementById('playerModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+
+  const epBar = document.getElementById('epBar');
+
+  if (isTv) {
+    epBar.classList.add('visible');
+    // Start on S1E1 immediately while we load season info
+    document.getElementById('playerFrame').src = buildEpUrl(imdbID, 1, 1);
+    await loadSeasons(imdbID);
+  } else {
+    epBar.classList.remove('visible');
+    document.getElementById('playerFrame').src = embedUrl(imdbID, type);
+  }
 }
 
 function openModalDirect(url, title) {
   document.getElementById('playerFrame').src = url;
   document.getElementById('modalTitle').textContent = title;
+  document.getElementById('epBar').classList.remove('visible');
   document.getElementById('playerModal').classList.add('open');
   document.body.style.overflow = 'hidden';
 }
@@ -1457,6 +1728,86 @@ function closeModal() {
   document.getElementById('playerModal').classList.remove('open');
   document.getElementById('playerFrame').src = '';
   document.body.style.overflow = '';
+  document.getElementById('epBar').classList.remove('visible');
+  _modalImdbID = '';
+  _modalType   = '';
+}
+
+function buildEpUrl(imdbID, season, episode) {
+  const src = SOURCES[activeSource] || SOURCES.vidsrc;
+  return src.tv(imdbID, season, episode);
+}
+
+async function loadSeasons(imdbID) {
+  const loadEl = document.getElementById('epLoading');
+  const seasonSel = document.getElementById('epSeason');
+  const epSel = document.getElementById('epEpisode');
+  loadEl.textContent = 'Loading seasons…';
+  seasonSel.innerHTML = '';
+  epSel.innerHTML = '';
+
+  try {
+    // Fetch show details to get total seasons
+    const r = await fetch(`${OMDB}&i=${imdbID}`);
+    const d = await r.json();
+    _modalSeasonCount = parseInt(d.totalSeasons, 10) || 1;
+    loadEl.textContent = '';
+
+    for (let s = 1; s <= _modalSeasonCount; s++) {
+      const opt = document.createElement('option');
+      opt.value = s;
+      opt.textContent = `Season ${s}`;
+      seasonSel.appendChild(opt);
+    }
+
+    await loadEpisodeList(imdbID, 1);
+  } catch(e) {
+    loadEl.textContent = 'Could not load seasons';
+  }
+}
+
+async function loadEpisodeList(imdbID, season) {
+  const loadEl = document.getElementById('epLoading');
+  const epSel = document.getElementById('epEpisode');
+  loadEl.textContent = 'Loading episodes…';
+  epSel.innerHTML = '';
+
+  try {
+    const r = await fetch(`${OMDB}&i=${imdbID}&Season=${season}`);
+    const d = await r.json();
+    const episodes = d.Episodes || [];
+    loadEl.textContent = '';
+
+    episodes.forEach((ep, i) => {
+      const opt = document.createElement('option');
+      opt.value = ep.Episode || (i + 1);
+      const name = ep.Title && ep.Title !== 'N/A' ? ` — ${ep.Title}` : '';
+      opt.textContent = `Ep ${opt.value}${name}`;
+      epSel.appendChild(opt);
+    });
+
+    if (!episodes.length) {
+      // Fallback: just add 1-24 if OMDb returned nothing
+      for (let e = 1; e <= 24; e++) {
+        const opt = document.createElement('option');
+        opt.value = e; opt.textContent = `Episode ${e}`;
+        epSel.appendChild(opt);
+      }
+    }
+  } catch(e) {
+    loadEl.textContent = 'Could not load episodes';
+  }
+}
+
+async function onSeasonChange() {
+  const season = parseInt(document.getElementById('epSeason').value, 10);
+  await loadEpisodeList(_modalImdbID, season);
+}
+
+function loadEpisode() {
+  const season  = parseInt(document.getElementById('epSeason').value, 10)  || 1;
+  const episode = parseInt(document.getElementById('epEpisode').value, 10) || 1;
+  document.getElementById('playerFrame').src = buildEpUrl(_modalImdbID, season, episode);
 }
 
 document.getElementById('playerModal').addEventListener('click', function(e) {
@@ -1602,6 +1953,57 @@ async function loadMore() {
 // ─── UTIL ───
 function esc(str) {
   return (str || '').replace(/'/g, "\\'").replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+}
+
+
+// ─── SOURCE SWITCHER ───
+let activeSource = localStorage.getItem('funtime_source') || ACTIVE_SOURCE;
+
+// Apply saved source on load
+(function applySource() {
+  const src = SOURCES[activeSource] || SOURCES.vidsrc;
+  document.getElementById('sourceLabel').textContent = src.name;
+  document.querySelectorAll('.source-option').forEach(el => {
+    el.classList.toggle('active', el.id === 'opt-' + activeSource);
+  });
+})();
+
+function toggleSourceMenu() {
+  const dd = document.getElementById('sourceDropdown');
+  dd.classList.toggle('open');
+}
+
+function setSource(key) {
+  activeSource = key;
+  localStorage.setItem('funtime_source', key);
+  const src = SOURCES[key] || SOURCES.vidsrc;
+  document.getElementById('sourceLabel').textContent = src.name;
+  document.querySelectorAll('.source-option').forEach(el => {
+    el.classList.toggle('active', el.id === 'opt-' + key);
+  });
+  document.getElementById('sourceDropdown').classList.remove('open');
+}
+
+// Close dropdown when clicking outside
+document.addEventListener('click', function(e) {
+  if (!document.getElementById('sourceSwitcher').contains(e.target)) {
+    document.getElementById('sourceDropdown').classList.remove('open');
+  }
+});
+
+// ─── THEME TOGGLE ───
+(function applyTheme() {
+  const saved = localStorage.getItem('funtime_theme');
+  if (saved === 'light') {
+    document.body.classList.add('light');
+    document.getElementById('themeBtn').textContent = '☀️';
+  }
+})();
+
+function toggleTheme() {
+  const isLight = document.body.classList.toggle('light');
+  localStorage.setItem('funtime_theme', isLight ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = isLight ? '☀️' : '🌙';
 }
 
 // ─── INIT ───
