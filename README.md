@@ -6,6 +6,7 @@
 ![HTML](https://img.shields.io/badge/HTML5-Single%20File-e8b86d?style=for-the-badge&logo=html5&logoColor=black)
 ![API](https://img.shields.io/badge/OMDb-API%20Powered-3d7fff?style=for-the-badge&logo=imdb&logoColor=white)
 ![License](https://img.shields.io/badge/License-MIT-3dffc0?style=for-the-badge)
+![VidSrc](https://img.shields.io/badge/VidSrc-Streaming%20API-ff4d6d?style=for-the-badge&logo=youtube&logoColor=white)
 ![Zero Dependencies](https://img.shields.io/badge/Dependencies-Zero-ff4d6d?style=for-the-badge)
 
 <br/>
@@ -148,7 +149,7 @@ The free tier gives you **1,000 requests per day**. FunTime batches requests and
 ## 🛠️ Built With
 
 - **[OMDb API](https://www.omdbapi.com/)** — movie & TV metadata, posters, ratings
-- **[VidSrc](https://vidsrc.me/)** — embedded video player
+- **[VidSrc](https://vidsrc.me/)** — video streaming & embed API (`/embed/movie?imdb=` · `/embed/tv?imdb=`)
 - **[Bebas Neue](https://fonts.google.com/specimen/Bebas+Neue)** + **[DM Sans](https://fonts.google.com/specimen/DM+Sans)** — Google Fonts
 - **Vanilla JS** — zero frameworks, zero dependencies
 - **CSS Perspective + `rotateY`** — pure CSS 3D flip effect
@@ -166,6 +167,34 @@ The free tier gives you **1,000 requests per day**. FunTime batches requests and
 | Mobile Chrome/Safari | ✅ Responsive |
 
 ---
+
+
+---
+
+## 📺 VidSrc API — Quick Reference
+
+FunTime uses **VidSrc** to stream movies and TV shows directly inside the in-page player modal.
+
+| Embed URL | What it streams |
+|---|---|
+| `/embed/movie?imdb=tt0111161` | Movie by IMDb ID |
+| `/embed/tv?imdb=tt0903747` | TV show by IMDb ID |
+| `/embed/movie?imdb=tt0111161&autoplay=1` | Auto-starts playback |
+
+The base URL is set on **line 1101** in `funtime.html`:
+
+```js
+const VIDSRC = "https://vidsrc-embed.ru/embed";
+```
+
+> 💡 If a stream stops working, swap the base URL with another VidSrc mirror — the embed paths (`/movie`, `/tv`) stay the same across mirrors.
+
+**Common VidSrc mirrors:**
+```
+https://vidsrc.to/embed
+https://vidsrc.me/embed
+https://vidsrc-embed.ru/embed   ← currently used
+```
 
 ## ⚠️ Disclaimer
 
